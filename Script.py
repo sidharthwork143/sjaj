@@ -160,7 +160,21 @@ Nᴀᴍᴇ - {}
     
 
     SINFO = """
+⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯
+ꜱᴇʀɪᴇꜱ ʀᴇǫᴜᴇꜱᴛ ꜰᴏʀᴍᴀᴛ
+⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯
+ɢᴏ ᴛᴏ ɢᴏᴏɢʟᴇ ➠ ᴛʏᴘᴇ ꜱᴇʀɪᴇꜱ ɴᴀᴍᴇ ➠ ᴄᴏᴘʏ ᴄᴏʀʀᴇᴄᴛ ɴᴀᴍᴇ ➠ ᴘᴀꜱᴛᴇ ᴛʜɪꜱ ɢʀᴏᴜᴘ
+ᴇxᴀᴍᴘʟᴇ : Loki S01E01
+🚯 ᴅᴏɴᴛ ᴜꜱᴇ ➠ ':(!,./)"""
 
+    NORSLTS = """ 
+#NoResults
+Iᴅ : <code>{}</code>
+Nᴀᴍᴇ : {}
+Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
+
+    CAPTION = """<b><a href="https://t.me/Arpitbotmovies">📂Fɪʟᴇɴᴀᴍᴇ : {file_name}</a>  
+    Jᴏɪɴ Us ➠ @Film_CityOfficial"""
 
     IMDB_TEMPLATE_TXT = """
 <b>🏷 Title</b>: <a href={url}>{title}</a>
