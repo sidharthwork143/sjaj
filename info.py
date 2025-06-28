@@ -50,7 +50,7 @@ reqst_channel = environ.get('REQST_CHANNEL_ID', '-1002767417976')  # Request cha
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/Film_CityOfficial')  # Support group link (make sure bot is admin)
 
 # FORCE_SUB 
-auth_req_channel = environ.get('AUTH_REQ_CHANNEL', '-1002739491658')  # requst to join Channel for force sub (make sure bot is admin) only for bot ADMINS  
+auth_req_channel = environ.get('AUTH_REQ_CHANNEL', '-1002634804560 -1002593972792')  # requst to join Channel for force sub (make sure bot is admin) only for bot ADMINS  
 AUTH_CHANNELS = [int(channels_id) for channels_id in environ.get('AUTH_CHANNELS', '-1002163955891').split() if re.match(r'^-?\d+$', channels_id)]  # Channels for force sub (make sure bot is admin)
 
 
@@ -115,7 +115,7 @@ THREE_VERIFY_GAP = int(environ.get('THREE_VERIFY_GAP', "54000"))
 # ============================
 # Channel & Group Links Configuration
 # ============================
-GRP_LNK = environ.get('GRP_LNK', 'https://t.me/FilmCity_Request')
+GRP_LNK = environ.get('GRP_LNK', 'https://t.me/+auBaIAnB4R84YzJl')
 CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/Film_CityOfficial')
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/Arpitbotmovies')
 UPDATE_CHNL_LNK = environ.get('UPDATE_CHNL_LNK', 'https://t.me/Film_CityOfficial')
