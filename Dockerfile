@@ -9,7 +9,7 @@ RUN apt-get update && apt-get upgrade -y && \
         tk-dev tcl-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /moviestelecast
+WORKDIR /DreamxBotz
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip --root-user-action=ignore && \
