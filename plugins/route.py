@@ -6,12 +6,12 @@ import secrets
 import time
 import mimetypes
 from aiohttp.http_exceptions import BadStatusLine
-from moviestelecast.Bot import multi_clients, work_loads, moviestelecast
-from moviestelecast.server.exceptions import FIleNotFound, InvalidHash
-from moviestelecast.zzint import StartTime, __version__
-from moviestelecast.util.custom_dl import ByteStreamer
-from moviestelecast.util.time_format import get_readable_time
-from moviestelecast.util.render_template import render_page
+from dreamxbotz.Bot import multi_clients, work_loads, dreamxbotz
+from dreamxbotz.server.exceptions import FIleNotFound, InvalidHash
+from dreamxbotz.zzint import StartTime, __version__
+from dreamxbotz.util.custom_dl import ByteStreamer
+from dreamxbotz.util.time_format import get_readable_time
+from dreamxbotz.util.render_template import render_page
 from info import *
 
 
@@ -19,7 +19,7 @@ routes = web.RouteTableDef()
 
 @routes.get("/", allow_head=True)
 async def root_route_handler(request):
-    return web.json_response("moviestelecast")
+    return web.json_response("dreamxbotz")
 
 @routes.get(r"/watch/{path:\S+}", allow_head=True)
 async def stream_handler(request: web.Request):
