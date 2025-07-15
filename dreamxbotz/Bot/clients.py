@@ -2,12 +2,12 @@ import asyncio
 import logging
 from info import *
 from pyrogram import Client
-from moviestelecast.util.config_parser import TokenParser
-from . import multi_clients, work_loads, moviestelecast
+from dreamxbotz.util.config_parser import TokenParser
+from . import multi_clients, work_loads, dreamxbotz
 
 
 async def initialize_clients():
-    multi_clients[0] = moviestelecast
+    multi_clients[0] = dreamxbotz
     work_loads[0] = 0
     all_tokens = TokenParser().parse_from_env()
     if not all_tokens:
