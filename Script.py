@@ -202,9 +202,7 @@ Nᴀᴍᴇ : {}
 
 Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
-    CAPTION = """<b><blockquote><i>{file_caption}</i></blockquote>
-<blockquote>Jᴏɪɴ Us ➠ @Patrick_Botz </blockquote></b>""" 
-
+    CAPTION = """📂 <i><a href="https://t.me/Patrick_Botz">{file_name}</a></i>\n\n<blockquote><b>Jᴏɪɴ Us ➠ <a href="https://t.me/Patrick_Botz">@Patrick_Botz</a></b></blockquote>"""
     
     MOVIE_UPDATE_NOTIFY_TXT = """
 </b><a href={poster_url}>📥</a><a href={imdb_url}>New {tag} Added</a></b>
