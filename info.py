@@ -54,7 +54,7 @@ SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/+QQiRoIMObCcwZThl')  # 
 
 # FORCE_SUB 
 auth_req_channel = environ.get('AUTH_REQ_CHANNEL', '-1002383920676')  # requst to join Channel for force sub (make sure bot is admin) only for bot ADMINS  
-AUTH_CHANNELS = [int(channels_id) for channels_id in environ.get('AUTH_CHANNELS', '').split() if re.match(r'^-?\d+$', channels_id)]  # Channels for force sub (make sure bot is admin)
+AUTH_CHANNELS = [int(channels_id) for channels_id in environ.get('AUTH_CHANNELS', '-100').split() if re.match(r'^-?\d+$', channels_id)]  # Channels for force sub (make sure bot is admin)
 
 
 
