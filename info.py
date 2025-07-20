@@ -54,7 +54,7 @@ SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/+QQiRoIMObCcwZThl')  # 
 
 # FORCE_SUB 
 auth_req_channel = environ.get('AUTH_REQ_CHANNEL', '-1002383920676')  # requst to join Channel for force sub (make sure bot is admin) only for bot ADMINS  
-AUTH_CHANNELS = [int(channels_id) for channels_id in environ.get('AUTH_CHANNELS', '-1002370466536').split() if re.match(r'^-?\d+$', channels_id)]  # Channels for force sub (make sure bot is admin)
+AUTH_CHANNELS = [int(channels_id) for channels_id in environ.get('AUTH_CHANNELS', '').split() if re.match(r'^-?\d+$', channels_id)]  # Channels for force sub (make sure bot is admin)
 
 
 
@@ -214,9 +214,9 @@ else:
     ON_HEROKU = False
 HAS_SSL = bool(getenv('HAS_SSL', True))
 if HAS_SSL:
-    URL = "".format(FQDN)
+    URL = "https://zealous-antonina-drdoom11-f601e5b8.koyeb.app/".format(FQDN)
 else:
-    URL = "".format(FQDN)
+    URL = "https://zealous-antonina-drdoom11-f601e5b8.koyeb.app/".format(FQDN)
 
 # ============================
 # Reactions Configuration
