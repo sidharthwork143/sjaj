@@ -884,15 +884,15 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.answer("Eᴠᴇʀʏᴛʜɪɴɢ's Gᴏɴᴇ")
         await query.message.edit('ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ᴀʟʟ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ ✅')
 
-    elif query.data.startswith("checksub"): #update
+    elif query.data.startswith("checksub"):
         try:
             btn = []
             ident, kk, file_id = query.data.split("#")
             chat = file_id.split("_")[0]
             settings = await get_settings(chat)
-            fsub_channels = settings.get('fsub', AUTH_CHANNELS) if settings else AUTH_CHANNELS
+            dreamx_channels = settings.get('fsub', AUTH_CHANNELS) if settings else AUTH_CHANNELS
             btn = []
-            btn += await is_subscribed(client, query.from_user.id, fsub_channels)
+            btn += await is_subscribed(client, query.from_user.id, dreamx_channels)
             if settings.get('fsub', AUTH_CHANNELS) == AUTH_CHANNELS:
                 btn += await is_req_subscribed(client, query.from_user.id, AUTH_REQ_CHANNELS)
             

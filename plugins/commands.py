@@ -227,7 +227,7 @@ async def start(client, message):
         pre, grp_id, file_id = "", 0, data
 
    
-    if not await db.has_premium_access(message.from_user.id): #update
+    if not await db.has_premium_access(message.from_user.id):
         btn = []
         try:
             chat = int(data.split("_", 2)[1])
@@ -1320,7 +1320,7 @@ async def verify(bot, message):
         print(f"Error: {e}")
         await message.reply_text(f"Error: {e}")
 
-@Client.on_message(filters.command('set_fsub'))#update
+@Client.on_message(filters.command('set_fsub'))
 async def set_fsub(client, message):
     try:
         userid = message.from_user.id if message.from_user else None
