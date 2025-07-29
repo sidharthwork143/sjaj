@@ -232,10 +232,12 @@ async def start(client, message):
         try:
             chat = int(data.split("_", 2)[1])
             settings = await get_settings(chat)
-            fsub_channels = settings.get("fsub", AUTH_CHANNELS) if settings else AUTH_CHANNELS
-            btn += await is_subscribed(client, message.from_user.id, fsub_channels)
-            dreamxbotz_joined = settings.get("reqfsub", AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
-            btn += await is_req_subscribed(client, message.from_user.id, dreamxbotz_joined)
+            dreamxbotz_joined = settings.get("fsub", AUTH_CHANNELS) if settings else AUTH_CHANNELS
+            
+            if dreamxbotz_joined :
+                btn += await is_subscribed(client, message.from_user.id, dreamxbotz_joined)
+            if AUTH_REQ_CHANNELS and settings.get("fsub", AUTH_CHANNELS) == AUTH_CHANNELS:
+                btn += await is_req_subscribed(client, message.from_user.id, AUTH_REQ_CHANNELS)
             if btn:
                 if len(message.command) > 1 and "_" in message.command[1]:
                     kk, file_id = message.command[1].split("_", 1)
@@ -1280,8 +1282,7 @@ async def reset_group_callback(client, callback_query):
         'caption': CUSTOM_FILE_CAPTION,
         'log': LOG_CHANNEL,
         'is_verify': IS_VERIFY,
-        'fsub': AUTH_CHANNELS,
-        'reqfsub': AUTH_REQ_CHANNELS
+        'fsub': AUTH_CHANNELS
     }
     current = await get_settings(grp_id)
     if current == defaults:
@@ -1319,12 +1320,12 @@ async def verify(bot, message):
         print(f"Error: {e}")
         await message.reply_text(f"Error: {e}")
 
-@Client.on_message(filters.command(['set_fsub', 'set_req_fsub']))
-async def set_force_channel(client, message):
+@Client.on_message(filters.command('set_fsub'))
+async def set_fsub(client, message):
     try:
         userid = message.from_user.id if message.from_user else None
         if not userid:
-            return await message.reply("<b>You are Anonymous admin, you can't use this command!</b>")
+            return await message.reply("<b>You are Anonymous admin you can't use this command !</b>")
         if message.chat.type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
             return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜsᴇᴅ ɪɴ ɢʀᴏᴜᴘs")
         grp_id = message.chat.id
@@ -1333,28 +1334,20 @@ async def set_force_channel(client, message):
             return await message.reply_text(script.NT_ADMIN_ALRT_TXT)
         args = message.text.split(maxsplit=1)
         if len(args) < 2:
-            usage = (
+            return await message.reply_text(
                 "ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ!\n\n"
-                "ᴄᴀɴ ᴀᴅᴅ ᴍᴜʟᴛɪᴘʟᴇ ᴄʜᴀɴɴᴇʟs sᴇᴘᴀʀᴀᴛᴇᴅ ʙʏ sᴘᴀᴄᴇs. ʟɪᴋᴇ: /sᴇᴛ_ғsᴜʙ ɪᴅ1 ɪᴅ2 ɪᴅ3"
-                if message.command[0] == 'set_fsub'
-                else
-                "ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ!\n\n"
-                "ᴄᴀɴ ᴀᴅᴅ ᴍᴜʟᴛɪᴘʟᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs ᴡɪᴛʜ ᴊᴏɪɴ ʀᴇǫᴜᴇsᴛ ᴏɴ.\n"
-                "ᴜsᴀɢᴇ: /sᴇᴛ_ʀᴇǫ_ғsᴜʙ ɪᴅ1 ɪᴅ2 ɪᴅ3"
+                "ᴄᴀɴ ᴀᴅᴅ ᴍᴜʟᴛɪᴘʟᴇ ᴄʜᴀɴɴᴇʟs sᴇᴘᴀʀᴀᴛᴇᴅ ʙʏ sᴘᴀᴄᴇs. ʟɪᴋᴇ: /sᴇᴛ_ғsᴜʙ ɪᴅ1 ɪᴅ2 ɪᴅ3\n"
             )
-            return await message.reply_text(usage)
         option = args[1].strip()
         try:
-            ids = [int(x) for x in option.split()]
+            fsub_ids = [int(x) for x in option.split()]
         except ValueError:
             return await message.reply_text('ᴍᴀᴋᴇ sᴜʀᴇ ᴀʟʟ ɪᴅs ᴀʀᴇ ɪɴᴛᴇɢᴇʀs.')
-        if len(ids) > 5:
+        if len(fsub_ids) > 5:
             return await message.reply_text("ᴍᴀxɪᴍᴜᴍ 5 ᴄʜᴀɴɴᴇʟs ᴀʟʟᴏᴡᴇᴅ.")
+        channels = "ᴄʜᴀɴɴᴇʟs:\n"
         channel_titles = []
-        channels = (
-            "ᴄʜᴀɴɴᴇʟs:\n" if message.command[0] == 'set_fsub' else "ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs:\n"
-        )
-        for id in ids:
+        for id in fsub_ids:
             try:
                 chat = await client.get_chat(id)
             except Exception as e:
@@ -1365,27 +1358,17 @@ async def set_force_channel(client, message):
                 return await message.reply_text(f"{id} ɪs ɴᴏᴛ ᴀ ᴄʜᴀɴɴᴇʟ.")
             channel_titles.append(f"{chat.title} (`{id}`)")
             channels += f'{chat.title}\n'
-        key = 'fsub' if message.command[0] == 'set_fsub' else 'reqfsub'
-        await save_group_settings(grp_id, key, ids)
-        mention = message.from_user.mention if message.from_user else "ᴅʀᴇᴀᴍxʙᴏᴛᴢ"
-        if key == 'fsub':
-            await client.send_message(
-                LOG_API_CHANNEL,
-                f"#Fsub_Channel_set\n\n"
-                f"ᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ꜰᴏʀᴄᴇ ᴄʜᴀɴɴᴇʟ(ꜱ) ꜰᴏʀ {title}:\n\n"
-                f"ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ):\n" + '\n'.join(channel_titles)
-            )
-        else:
-            await message.reply_text(f"sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ) ғᴏʀ {title} ᴛᴏ\n\n{channels}")
-            await client.send_message(
-                LOG_API_CHANNEL,
-                f"#ReqFsub_Channel_Set\n\n"
-                f"ᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ) ꜰᴏʀ {title}:\n\n"
-                f"ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ):\n" + '\n'.join(channel_titles)
-            )
+        await save_group_settings(grp_id, 'fsub', fsub_ids)
+        await message.reply_text(f"sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ) ғᴏʀ {title} ᴛᴏ\n\n{channels}")
+        mention = message.from_user.mention if message.from_user else "Unknown"
+        await client.send_message(
+            LOG_API_CHANNEL,
+            f"#Fsub_Channel_set\n\n"
+            f"ᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ꜰᴏʀᴄᴇ ᴄʜᴀɴɴᴇʟ(ꜱ) ꜰᴏʀ {title}:\n\n"
+            f"ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ):\n" + '\n'.join(channel_titles)
+        )
     except Exception as e:
-        key = message.command[0] if hasattr(message, "command") else "unknown"
-        err_text = f"⚠️ Error in set_{key} :\n{e}"
+        err_text = f"⚠️ Error in set_fSub :\n{e}"
         logger.error(err_text)
         await client.send_message(LOG_API_CHANNEL, err_text)
 
