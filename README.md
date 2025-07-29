@@ -1,3 +1,5 @@
+<h1 align="center"><b>🚩 ᴊᴀɪ ꜱʜʀɪ ʀᴀᴍ 🚩</b></h1>
+
 <p align="center">
   <img src="https://github.com/DreamXBotz/Pics/blob/main/dreamxbotz.jpg" alt="DreamxBotz Logo">
 </p>
@@ -36,6 +38,8 @@ Try the live bot here:
 ## 🙏 Special Thanks To
 
 - 🌴 [⌯ Ꭺɴᴏɴʏᴍᴏᴜꜱ | ×͜× |](https://t.me/BeingXAnonymous)
+- 🌴 [⌯ ᴢɪsʜᴀɴ | ×͜× |](https://t.me/IM_JISSHU)
+- 🌴 [⌯ ʙʜᴀʀᴀᴛʜ | ×͜× |](https://t.me/Bharath_boy)
 - 🌴 [Harshal Purohit Edits](https://github.com/HarshalPurohitEdits)
 - 🌴 [Support Group](https://t.me/Deendayal_Support_Group)
 
@@ -50,7 +54,7 @@ Join our support group for assistance:
 ---
 
 ## 🌟 Features
-
+- ✅ Double db support 
 - ✅ Stream Mode Toggle  
 - ✅ 3 User Verification  
 - ✅ Multi FSub Admin & Group Support  
