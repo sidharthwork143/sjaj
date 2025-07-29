@@ -19,7 +19,7 @@ from database.ia_filterdb import Media, Media2, get_file_details, unpack_new_fil
 from database.users_chats_db import db
 from info import *
 from utils import get_settings, save_group_settings, is_subscribed, is_req_subscribed, get_size, get_shortlink, is_check_admin, temp, get_readable_time, get_time, generate_settings_text, log_error, clean_filename,save_default_settings
-import traceback
+
 
 
 logging.basicConfig(level=logging.ERROR)
@@ -231,14 +231,11 @@ async def start(client, message):
         btn = []
         try:
             chat = int(data.split("_", 2)[1])
-            if AUTH_CHANNELS:
-                settings      = await get_settings(chat)
-                fsub_channels = settings.get("fsub", AUTH_CHANNELS) if settings else AUTH_CHANNELS
-                btn += await is_subscribed(client, message.from_user.id, fsub_channels)
-            if AUTH_REQ_CHANNELS:
-                settings        = await get_settings(chat)
-                rqfsub_channels = settings.get("reqfsub", AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
-                btn += await is_req_subscribed(client, message.from_user.id, rqfsub_channels)
+            settings = await get_settings(chat)
+            fsub_channels = settings.get("fsub", AUTH_CHANNELS) if settings else AUTH_CHANNELS
+            btn += await is_subscribed(client, message.from_user.id, fsub_channels)
+            dreamxbotz_joined = settings.get("reqfsub", AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
+            btn += await is_req_subscribed(client, message.from_user.id, dreamxbotz_joined)
             if btn:
                 if len(message.command) > 1 and "_" in message.command[1]:
                     kk, file_id = message.command[1].split("_", 1)
@@ -1322,12 +1319,12 @@ async def verify(bot, message):
         print(f"Error: {e}")
         await message.reply_text(f"Error: {e}")
 
-@Client.on_message(filters.command('set_fsub'))
-async def set_fsub(client, message):
+@Client.on_message(filters.command(['set_fsub', 'set_req_fsub']))
+async def set_force_channel(client, message):
     try:
         userid = message.from_user.id if message.from_user else None
         if not userid:
-            return await message.reply("<b>You are Anonymous admin you can't use this command !</b>")
+            return await message.reply("<b>You are Anonymous admin, you can't use this command!</b>")
         if message.chat.type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
             return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜsᴇᴅ ɪɴ ɢʀᴏᴜᴘs")
         grp_id = message.chat.id
@@ -1336,20 +1333,28 @@ async def set_fsub(client, message):
             return await message.reply_text(script.NT_ADMIN_ALRT_TXT)
         args = message.text.split(maxsplit=1)
         if len(args) < 2:
-            return await message.reply_text(
+            usage = (
                 "ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ!\n\n"
-                "ᴄᴀɴ ᴀᴅᴅ ᴍᴜʟᴛɪᴘʟᴇ ᴄʜᴀɴɴᴇʟs sᴇᴘᴀʀᴀᴛᴇᴅ ʙʏ sᴘᴀᴄᴇs. ʟɪᴋᴇ: /sᴇᴛ_ғsᴜʙ ɪᴅ1 ɪᴅ2 ɪᴅ3\n"
+                "ᴄᴀɴ ᴀᴅᴅ ᴍᴜʟᴛɪᴘʟᴇ ᴄʜᴀɴɴᴇʟs sᴇᴘᴀʀᴀᴛᴇᴅ ʙʏ sᴘᴀᴄᴇs. ʟɪᴋᴇ: /sᴇᴛ_ғsᴜʙ ɪᴅ1 ɪᴅ2 ɪᴅ3"
+                if message.command[0] == 'set_fsub'
+                else
+                "ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ!\n\n"
+                "ᴄᴀɴ ᴀᴅᴅ ᴍᴜʟᴛɪᴘʟᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs ᴡɪᴛʜ ᴊᴏɪɴ ʀᴇǫᴜᴇsᴛ ᴏɴ.\n"
+                "ᴜsᴀɢᴇ: /sᴇᴛ_ʀᴇǫ_ғsᴜʙ ɪᴅ1 ɪᴅ2 ɪᴅ3"
             )
+            return await message.reply_text(usage)
         option = args[1].strip()
         try:
-            fsub_ids = [int(x) for x in option.split()]
+            ids = [int(x) for x in option.split()]
         except ValueError:
             return await message.reply_text('ᴍᴀᴋᴇ sᴜʀᴇ ᴀʟʟ ɪᴅs ᴀʀᴇ ɪɴᴛᴇɢᴇʀs.')
-        if len(fsub_ids) > 5:
+        if len(ids) > 5:
             return await message.reply_text("ᴍᴀxɪᴍᴜᴍ 5 ᴄʜᴀɴɴᴇʟs ᴀʟʟᴏᴡᴇᴅ.")
-        channels = "ᴄʜᴀɴɴᴇʟs:\n"
         channel_titles = []
-        for id in fsub_ids:
+        channels = (
+            "ᴄʜᴀɴɴᴇʟs:\n" if message.command[0] == 'set_fsub' else "ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs:\n"
+        )
+        for id in ids:
             try:
                 chat = await client.get_chat(id)
             except Exception as e:
@@ -1360,20 +1365,29 @@ async def set_fsub(client, message):
                 return await message.reply_text(f"{id} ɪs ɴᴏᴛ ᴀ ᴄʜᴀɴɴᴇʟ.")
             channel_titles.append(f"{chat.title} (`{id}`)")
             channels += f'{chat.title}\n'
-        await save_group_settings(grp_id, 'fsub', fsub_ids)
-        mention = message.from_user.mention if message.from_user else "Unknown"
-        await client.send_message(
-            LOG_API_CHANNEL,
-            f"#Fsub_Channel_set\n\n"
-            f"ᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ꜰᴏʀᴄᴇ ᴄʜᴀɴɴᴇʟ(ꜱ) ꜰᴏʀ {title}:\n\n"
-            f"ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ):\n" + '\n'.join(channel_titles)
-        )
+        key = 'fsub' if message.command[0] == 'set_fsub' else 'reqfsub'
+        await save_group_settings(grp_id, key, ids)
+        mention = message.from_user.mention if message.from_user else "ᴅʀᴇᴀᴍxʙᴏᴛᴢ"
+        if key == 'fsub':
+            await client.send_message(
+                LOG_API_CHANNEL,
+                f"#Fsub_Channel_set\n\n"
+                f"ᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ꜰᴏʀᴄᴇ ᴄʜᴀɴɴᴇʟ(ꜱ) ꜰᴏʀ {title}:\n\n"
+                f"ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ):\n" + '\n'.join(channel_titles)
+            )
+        else:
+            await message.reply_text(f"sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ) ғᴏʀ {title} ᴛᴏ\n\n{channels}")
+            await client.send_message(
+                LOG_API_CHANNEL,
+                f"#ReqFsub_Channel_Set\n\n"
+                f"ᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ) ꜰᴏʀ {title}:\n\n"
+                f"ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ):\n" + '\n'.join(channel_titles)
+            )
     except Exception as e:
-        err_text = f"⚠️ Error in set_fSub :\n{e}"
+        key = message.command[0] if hasattr(message, "command") else "unknown"
+        err_text = f"⚠️ Error in set_{key} :\n{e}"
         logger.error(err_text)
         await client.send_message(LOG_API_CHANNEL, err_text)
-
-
 
 @Client.on_message(filters.private & filters.command("resetallgroup") & filters.user(ADMINS))
 async def reset_all_settings(client, message):
@@ -1389,74 +1403,6 @@ async def reset_all_settings(client, message):
             "<b>🚫 An error occurred while resetting group settings.\nPlease try again later.</b>",
             quote=True
         )
-        
-@Client.on_message(filters.command('set_req_fsub')) #update
-async def set_req_fsub(client, message):
-    try:
-        userid = message.from_user.id if message.from_user else None
-        if not userid:
-            return await message.reply("<b>You are Anonymous admin, you can't use this command!</b>")
-
-        if message.chat.type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-            return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ʙᴇ ᴜsᴇᴅ ɪɴ ɢʀᴏᴜᴘs")
-
-        grp_id = message.chat.id
-        title = message.chat.title
-
-        if not await is_check_admin(client, grp_id, userid):
-            return await message.reply_text(script.NT_ADMIN_ALRT_TXT)
-
-        args = message.text.split(maxsplit=1)
-        if len(args) < 2:
-            return await message.reply_text(
-                "ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ!\n\n"
-                "ᴄᴀɴ ᴀᴅᴅ ᴍᴜʟᴛɪᴘʟᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs ᴡɪᴛʜ ᴊᴏɪɴ ʀᴇǫᴜᴇsᴛ ᴏɴ.\n"
-                "ᴜsᴀɢᴇ: /sᴇᴛ_ʀᴇǫ_ғsᴜʙ ɪᴅ1 ɪᴅ2 ɪᴅ3"
-            )
-
-        option = args[1].strip()
-        try:
-            req_ids = [int(x) for x in option.split()]
-        except ValueError:
-            return await message.reply_text('ᴍᴀᴋᴇ sᴜʀᴇ ᴀʟʟ ɪᴅs ᴀʀᴇ ɪɴᴛᴇɢᴇʀs.')
-
-        if len(req_ids) > 5:
-            return await message.reply_text("ᴍᴀxɪᴍᴜᴍ 5 ᴄʜᴀɴɴᴇʟs ᴀʟʟᴏᴡᴇᴅ.")
-
-        channels = "ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟs:\n"
-        channel_titles = []
-
-        for id in req_ids:
-            try:
-                chat = await client.get_chat(id)
-            except Exception as e:
-                return await message.reply_text(
-                    f"{id} ɪs ɪɴᴠᴀʟɪᴅ!\nᴍᴀᴋᴇ sᴜʀᴇ ᴛʜɪs ʙᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ.\n\nError - {e}"
-                )
-
-            if chat.type != enums.ChatType.CHANNEL:
-                return await message.reply_text(f"{id} ɪs ɴᴏᴛ ᴀ ᴄʜᴀɴɴᴇʟ.")
-            channel_titles.append(f"{chat.title} (`{id}`)")
-            channels += f'{chat.title}\n'
-
-        # Save to DB
-        await save_group_settings(grp_id, 'reqfsub', req_ids)
-
-        mention = message.from_user.mention if message.from_user else "Unknown"
-        await message.reply_text(f"sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ) ғᴏʀ {title} ᴛᴏ\n\n{channels}")
-        await client.send_message(
-            LOG_API_CHANNEL,
-            f"#ReqFsub_Channel_Set\n\n"
-            f"ᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ) ꜰᴏʀ {title}:\n\n"
-            f"ʀᴇǫᴜɪʀᴇᴅ ᴄʜᴀɴɴᴇʟ(ꜱ):\n" + '\n'.join(channel_titles)
-        )
-
-
-    except Exception as e:
-        err_text = f"⚠️ Error in set_req_fsub:\n{e}"
-        logger.error(err_text)
-        await client.send_message(LOG_API_CHANNEL, err_text)
-
 
 @Client.on_message(filters.command("reset_group"))
 async def reset_group_command(client, message):

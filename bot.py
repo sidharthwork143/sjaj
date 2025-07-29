@@ -1,4 +1,3 @@
-
 import sys
 import glob
 import importlib
@@ -6,6 +5,7 @@ from pathlib import Path
 from pyrogram import Client, idle, __version__
 from pyrogram.raw.all import layer
 import time
+from pyrogram.errors import FloodWait
 import asyncio
 from datetime import date, datetime
 import pytz
@@ -31,14 +31,12 @@ logging.getLogger("aiohttp").setLevel(logging.ERROR)
 logging.getLogger("aiohttp.web").setLevel(logging.ERROR)
 logging.getLogger("pymongo").setLevel(logging.WARNING)
 
-
 botStartTime = time.time()
 ppath = "plugins/*.py"
 files = glob.glob(ppath)
 
 async def dreamxbotz_start():
-    print('\n')
-    print('\nInitalizing DreamxBotz')
+    print('\n\nInitalizing DreamxBotz')
     await dreamxbotz.start()
     bot_info = await dreamxbotz.get_me()
     dreamxbotz.username = bot_info.username
@@ -89,7 +87,13 @@ async def dreamxbotz_start():
     
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(dreamxbotz_start())
-    except KeyboardInterrupt:
-        logging.info('Service Stopped Bye 👋')
+    while True:
+        try:
+            loop.run_until_complete(dreamxbotz_start())
+            break  
+        except FloodWait as e:
+            print(f"FloodWait! Sleeping for {e.value} seconds.")
+            time.sleep(e.value) 
+        except KeyboardInterrupt:
+            logging.info('Service Stopped Bye 👋')
+            break

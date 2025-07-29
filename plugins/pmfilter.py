@@ -886,16 +886,14 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
     elif query.data.startswith("checksub"):
         try:
+            btn = []
             ident, kk, file_id = query.data.split("#")
             chat = file_id.split("_")[0]
             settings = await get_settings(chat)
             fsub_channels = settings.get('fsub', AUTH_CHANNELS) if settings else AUTH_CHANNELS
-            btn = []
             btn += await is_subscribed(client, query.from_user.id, fsub_channels)
-
-            req_fsub_channels = settings.get('reqfsub', AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
-            btn += await is_req_subscribed(client, query.from_user.id, req_fsub_channels)
-            
+            dreamxbotz_joined = settings.get('reqfsub', AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
+            btn += await is_req_subscribed(client, query.from_user.id, dreamxbotz_joined)
             if btn:
                 btn.append([InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", callback_data=f"checksub#{kk}#{file_id}")])
                 try:
