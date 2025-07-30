@@ -233,7 +233,6 @@ async def start(client, message):
             chat = int(data.split("_", 2)[1])
             settings = await get_settings(chat)
             dreamxbotz_joined = settings.get("fsub", AUTH_CHANNELS) if settings else AUTH_CHANNELS
-            
             if dreamxbotz_joined :
                 btn += await is_subscribed(client, message.from_user.id, dreamxbotz_joined)
             if AUTH_REQ_CHANNELS and settings.get("fsub", AUTH_CHANNELS) == AUTH_CHANNELS:
@@ -258,13 +257,11 @@ async def start(client, message):
                     parse_mode=enums.ParseMode.HTML
                 )
                 return
-
         except Exception as e:
             await log_error(client, f"❗️ Force Sub Error:\n\n{repr(e)}")
             logger.error(f"❗️ Force Sub Error:\n\n{repr(e)}")
 
 
-    
     user_id = m.from_user.id
     if not await db.has_premium_access(user_id):
         try:
@@ -488,37 +485,6 @@ async def start(client, message):
     await msg.delete()
     await k.edit_text("<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!</b>")
     return
-
-@Client.on_message(filters.command('channel') & filters.user(ADMINS))
-async def channel_info(bot, message):
-           
-    """Send basic information of channel"""
-    if isinstance(CHANNELS, (int, str)):
-        channels = [CHANNELS]
-    elif isinstance(CHANNELS, list):
-        channels = CHANNELS
-    else:
-        raise ValueError("ᴜɴᴇxᴘᴇᴄᴛᴇᴅ ᴛʏᴘᴇ ᴏꜰ ᴄʜᴀɴɴᴇʟꜱ.")
-
-    text = '📑 **ɪɴᴅᴇxᴇᴅ ᴄʜᴀɴɴᴇʟꜱ / ɢʀᴏᴜᴘꜱ ʟɪꜱᴛ :**\n'
-    for channel in channels:
-        chat = await bot.get_chat(channel)
-        if chat.username:
-            text += '\n@' + chat.username
-        else:
-            text += '\n' + chat.title or chat.first_name
-
-    text += f'\n\n**ᴛᴏᴛᴀʟ :** {len(CHANNELS)}'
-
-    if len(text) < 4096:
-        await message.reply(text)
-    else:
-        file = 'Indexed channels.txt'
-        with open(file, 'w') as f:
-            f.write(text)
-        await message.reply_document(file)
-        os.remove(file)
-
 
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def log_file(bot, message):
