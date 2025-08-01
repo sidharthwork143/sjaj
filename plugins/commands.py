@@ -231,7 +231,7 @@ async def start(client, message):
         btn = []
         try:
             chat = int(data.split("_", 2)[1])
-           settings      = await get_settings(chat)
+            settings = await get_settings(chat)
             fsub_channels = list(dict.fromkeys((settings.get('fsub', []) if settings else [])+ AUTH_CHANNELS)) 
 
             if fsub_channels:
