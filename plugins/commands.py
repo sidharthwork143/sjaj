@@ -237,7 +237,6 @@ async def start(client, message):
             if fsub_channels:
                 btn += await is_subscribed(client, message.from_user.id, fsub_channels)
             if AUTH_REQ_CHANNELS:
-            if btn:
                 if len(message.command) > 1 and "_" in message.command[1]:
                     kk, file_id = message.command[1].split("_", 1)
                     btn.append([
